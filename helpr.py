@@ -38,7 +38,7 @@ def load_priority_dictionary():
             return priority_dictionary
     # "priority_dictionary.json" does not exist.
     except IOError:
-        priority_dictionary = []
+        priority_dictionary = {}
         save_priority_dictionary(priority_dictionary)
         return priority_dictionary
 
