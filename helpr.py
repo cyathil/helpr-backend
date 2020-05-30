@@ -18,12 +18,14 @@ def load_queue_list():
         with open("queue_list.json","r") as FILE:
             queue_list = json.load(FILE)
             return queue_list
+    # "queue_list.json" does not exist.
     except IOError:
         queue_list = []
         save_queue_list(queue_list)
+        return queue_list
 
 def save_queue_list(queue_list):
-    with open("queue_list.json","w") as FILE:
+    with open("queue_list.json","w+") as FILE:
         json.dump(queue_list,FILE)
         pass
 
@@ -32,14 +34,16 @@ def save_queue_list(queue_list):
 def load_priority_dictionary():
     try:
         with open("priority_dictionary.json","r") as FILE:
-            queue_list = json.load(FILE)
-            return queue_list
+            priority_dictionary = json.load(FILE)
+            return priority_dictionary
+    # "priority_dictionary.json" does not exist.
     except IOError:
-        queue_list = []
-        save_queue_list(queue_list)
+        priority_dictionary = []
+        save_queue_list(priority_dictionary)
+        return priority_dictionary
 
 def save_priority_dictionary(priority_dictionary):
-    with open("priority_dictionary.json","w") as FILE:
+    with open("priority_dictionary.json","w+") as FILE:
         json.dump(priority_dictionary,FILE)
         pass
 
