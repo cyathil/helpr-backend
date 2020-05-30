@@ -2,6 +2,8 @@
 The core functions of the helpr application.
 '''
 
+import json
+
 # Put the global variables that hold the complete state of the application here.
 
 # queue is a list of dictionaries in the form:
@@ -11,11 +13,27 @@ The core functions of the helpr application.
 #     'status': status,
 #     'priority': priority,
 # }
-queue_list = []
+def load_queue_list():
+    with open("queue_list.json","r") as FILE:
+        queue_list = json.load(FILE)
+        return queue_list
+
+def save_queue_list(queue_list):
+    with open("queue_list.json","w") as FILE:
+        json.dump(queue_list,FILE)
+        pass
 
 # dictionary of (int) priorities indexed by (string) zid.
 # zid with lowest priority value has received the least help.
-priority_dictionary = {}
+def load_priority_dictionary():
+    with open("priority_dictionary.json","r") as FILE:
+        priority_dictionary = json.load(FILE)
+        return priority_dictionary
+
+def save_priority_dictionary(priority_dictionary):
+    with open("priority_dictionary.json","w") as FILE:
+        json.dump(priority_dictionary,FILE)
+        pass
 
 def make_request(zid, description):
     '''
@@ -34,7 +52,8 @@ def make_request(zid, description):
       KeyError: if there is already a request from this particular student in
       the queue.
     '''
-    global queue_list
+    queue_list = load_queue_list()
+    priority_dictionary = load_priority_dictionary()
     # raising errors.
     if description == "":
         raise ValueError
@@ -51,6 +70,8 @@ def make_request(zid, description):
         'priority': priority_dictionary[zid],
     }
     queue_list.append(new_request)
+    save_queue_list(queue_list)
+    save_priority_dictionary(priority_dictionary)
     pass
 
 def queue():
@@ -63,7 +84,7 @@ def queue():
       the description of their problem, and the status of their request (either
       "waiting" or "receiving").
     '''
-    global queue_list
+    queue_list = load_queue_list()
     # creating queue for tutor to view.
     result = []
     for request in queue_list:
@@ -90,7 +111,7 @@ def remaining(zid):
     Returns:
       (int) : The position as a number >= 0
     '''
-    global queue_list
+    queue_list = load_queue_list()
     # raising errors.
     is_waiting_in_queue = False
     for request in queue_list:
@@ -123,7 +144,7 @@ def help(zid):
       KeyError: if the given student does not have a request with a "waiting"
       status.
     '''
-    global queue_list
+    queue_list = load_queue_list()
     # raising errors.
     is_waiting_in_queue = False
     for request in queue_list:
@@ -136,7 +157,8 @@ def help(zid):
     for request in queue_list:
         if request['zid'] == zid:
             request['status'] = 'receiving'
-            break 
+            break
+    save_queue_list(queue_list)
     pass
 
 def resolve(zid):
@@ -150,8 +172,8 @@ def resolve(zid):
       KeyError: if the given student does not have a request in the queue with a
       "receiving" status.
     '''
-    global queue_list
-    global priority_dictionary
+    queue_list = load_queue_list()
+    priority_dictionary = load_priority_dictionary()
     # raising errors.
     is_receiving_in_queue = False
     for request in queue_list:
@@ -167,6 +189,8 @@ def resolve(zid):
             # lower priority of zid.
             priority_dictionary[zid] += 1
             break
+    save_queue_list(queue_list)
+    save_priority_dictionary(priority_dictionary)
     pass 
 
 def cancel(zid):
@@ -184,7 +208,7 @@ def cancel(zid):
       KeyError: If the student does not have a request in the queue with a
       "waiting" status.
     '''
-    global queue_list
+    queue_list = load_queue_list()
     # raising errors.
     is_waiting_in_queue = False
     for request in queue_list:
@@ -198,6 +222,7 @@ def cancel(zid):
         if request['zid'] == zid and request['status'] == 'waiting':
             queue_list.remove(request)
             break
+    save_queue_list(queue_list)
     pass 
 
 def revert(zid):
@@ -213,7 +238,7 @@ def revert(zid):
       KeyError: If the student does not have a request in the queue with a
       "receiving" status.
     '''
-    global queue_list
+    queue_list = load_queue_list()
     # raising errors.
     is_receiving_in_queue = False
     for request in queue_list:
@@ -227,6 +252,7 @@ def revert(zid):
         if request['zid'] == zid and request['status'] == 'receiving':
             request['status'] = 'waiting'
             break
+    save_queue_list(queue_list)
     pass 
 
 def reprioritise():
@@ -245,8 +271,9 @@ def reprioritise():
     def return_priority(request):
         return request['priority']
 
-    global queue_list
+    queue_list = load_queue_list()
     queue_list.sort(key=return_priority)
+    save_queue_list(queue_list)
     pass
 
 def end():
@@ -254,8 +281,8 @@ def end():
     Used by tutors at the end of the help session. All requests are removed from
     the queue and any records of previously resolved requests are wiped.
     '''
-    global queue_list
-    global priority_dictionary
     queue_list = []
     priority_dictionary = {}
+    save_queue_list(queue_list)
+    save_priority_dictionary(priority_dictionary)
     pass
