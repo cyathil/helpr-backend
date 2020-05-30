@@ -39,7 +39,7 @@ def load_priority_dictionary():
     # "priority_dictionary.json" does not exist.
     except IOError:
         priority_dictionary = []
-        save_queue_list(priority_dictionary)
+        save_priority_dictionary(priority_dictionary)
         return priority_dictionary
 
 def save_priority_dictionary(priority_dictionary):
