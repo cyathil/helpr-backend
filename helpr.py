@@ -14,12 +14,12 @@ import json
 #     'priority': priority,
 # }
 def load_queue_list():
-    with open("queue_list.json","r") as FILE:
+    with open("queue_list.json","r+") as FILE:
         queue_list = json.load(FILE)
         return queue_list
 
 def save_queue_list(queue_list):
-    with open("queue_list.json","w") as FILE:
+    with open("queue_list.json","w+") as FILE:
         json.dump(queue_list,FILE)
         pass
 
